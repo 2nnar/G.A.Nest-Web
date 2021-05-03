@@ -1,10 +1,12 @@
 import { ElementRef, Injectable, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 @Injectable()
 export class EngineService implements OnDestroy {
   private canvas: HTMLCanvasElement = {} as HTMLCanvasElement;
   private renderer: THREE.WebGLRenderer = {} as THREE.WebGLRenderer;
+  private fbxLoader: FBXLoader = {} as FBXLoader;
   private camera: THREE.PerspectiveCamera = {} as THREE.PerspectiveCamera;
   private scene: THREE.Scene = {} as THREE.Scene;
   private light: THREE.AmbientLight = {} as THREE.AmbientLight;
@@ -30,15 +32,12 @@ export class EngineService implements OnDestroy {
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
+    this.fbxLoader = new FBXLoader();
+
     // create the scene
     this.scene = new THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
+    this.camera = new THREE.PerspectiveCamera(75, 2, 0.1, 1000);
     this.camera.position.z = 50;
     this.scene.add(this.camera);
 
@@ -58,6 +57,7 @@ export class EngineService implements OnDestroy {
 
   public render(): void {
     this.renderer.render(this.scene, this.camera);
+    this.animate();
   }
 
   public addPolygon(
@@ -75,5 +75,44 @@ export class EngineService implements OnDestroy {
 
     const line = new THREE.Line(geometry, material);
     this.scene.add(line);
+  }
+
+  public loadPolygon(path: string): void {
+    this.fbxLoader.load(
+      path,
+      (obj) => {
+        this.scene.add(obj);
+      },
+      (xhr) => {
+        console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  private resizeCanvasToDisplaySize(): boolean {
+    const width = this.canvas.clientWidth;
+    const height = this.canvas.clientHeight;
+    const resizeNeeded =
+      this.canvas.width !== width || this.canvas.height !== height;
+    if (resizeNeeded) {
+      // you must pass false here or three.js sadly fights the browser
+      this.renderer.setSize(width, height, false);
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
+    }
+    return resizeNeeded;
+  }
+
+  private animate(): void {
+    const resizeNeeded = this.resizeCanvasToDisplaySize();
+    if (!resizeNeeded) {
+      return;
+    }
+
+    this.renderer.render(this.scene, this.camera);
+    requestAnimationFrame(this.animate.bind(this));
   }
 }
