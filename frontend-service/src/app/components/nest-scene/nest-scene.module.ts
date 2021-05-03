@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { NestSceneComponent } from './nest-scene/nest-scene.component';
-import { WebGLService } from './services/web-gl.service';
+import { EngineService } from './services/engine.service';
+import { UiModule } from '../ui/ui.module';
 
 @NgModule({
   declarations: [NestSceneComponent],
   exports: [NestSceneComponent],
-  providers: [WebGLService]
+  providers: [EngineService],
+  imports: [UiModule]
 })
 export class NestSceneModule {}

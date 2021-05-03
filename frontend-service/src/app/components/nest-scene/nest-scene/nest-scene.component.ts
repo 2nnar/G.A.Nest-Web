@@ -1,21 +1,21 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { WebGLService } from '../services/web-gl.service';
+import { ElementRef, OnInit, ViewChild, Component } from '@angular/core';
+import { EngineService } from '../services/engine.service';
 
 @Component({
   selector: 'app-nest-scene',
   templateUrl: './nest-scene.component.html',
   styleUrls: ['./nest-scene.component.scss'],
 })
-export class NestSceneComponent implements OnInit, AfterViewInit {
-  @ViewChild('sceneCanvas') private canvas = {} as ElementRef<HTMLCanvasElement>;
-  constructor(private webglService: WebGLService) {}
-  ngOnInit(): void {}
+export class NestSceneComponent implements OnInit {
 
-  ngAfterViewInit(): void {
-    if (!this.canvas) {
-      alert('canvas not supplied! cannot bind WebGL context!');
-      return;
-    }
-    this.webglService.initialiseWebGLContext(this.canvas.nativeElement);
+  @ViewChild('rendererCanvas', {static: true})
+  public rendererCanvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
+
+  public constructor(private engineService: EngineService) {
+  }
+
+  public ngOnInit(): void {
+    this.engineService.createScene(this.rendererCanvas);
+    this.engineService.render();
   }
 }
