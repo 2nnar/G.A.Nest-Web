@@ -1,5 +1,5 @@
+import { ElementRef, Injectable, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
-import {ElementRef, Injectable, OnDestroy} from '@angular/core';
 
 @Injectable()
 export class EngineService implements OnDestroy {
@@ -14,7 +14,7 @@ export class EngineService implements OnDestroy {
   public constructor() {}
 
   public ngOnDestroy(): void {
-    if (this.frameId != null) {
+    if (this.frameId !== null) {
       cancelAnimationFrame(this.frameId);
     }
   }
@@ -25,8 +25,8 @@ export class EngineService implements OnDestroy {
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
-      alpha: true,    // transparent background
-      antialias: true // smooth edges
+      alpha: true, // transparent background
+      antialias: true, // smooth edges
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -34,7 +34,10 @@ export class EngineService implements OnDestroy {
     this.scene = new THREE.Scene();
 
     this.camera = new THREE.PerspectiveCamera(
-      75, window.innerWidth / window.innerHeight, 0.1, 1000
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
     );
     this.camera.position.z = 50;
     this.scene.add(this.camera);
@@ -44,21 +47,33 @@ export class EngineService implements OnDestroy {
     this.light.position.z = 10;
     this.scene.add(this.light);
 
+    // test polygon
     const points = [];
-    points.push(new THREE.Vector2(- 10, 0));
+    points.push(new THREE.Vector2(-10, 0));
     points.push(new THREE.Vector2(0, 10));
     points.push(new THREE.Vector2(10, 0));
     points.push(new THREE.Vector2(-10, 0));
-
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-
-    const line = new THREE.Line(geometry, material);
-    this.scene.add(line);
-
+    this.addPolygon(points, 0x0000ff);
   }
 
   public render(): void {
     this.renderer.render(this.scene, this.camera);
+  }
+
+  public addPolygon(
+    points: THREE.Vector2[],
+    color: THREE.Color | string | number
+  ): void {
+    if (points.length === 0) {
+      return;
+    }
+
+    points.push(points[0]);
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({ color });
+
+    const line = new THREE.Line(geometry, material);
+    this.scene.add(line);
   }
 }

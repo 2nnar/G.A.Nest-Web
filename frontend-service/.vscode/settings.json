@@ -1,0 +1,75 @@
+{
+  // Соблюдать чистоту оформления
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // Исправлять импорты по сохранению
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": false,
+    "source.organizeImports": true
+  },
+
+  "prettier.printWidth": 120,
+
+  "editor.rulers": [
+    { "column": 100, "color": "#ff9900" },
+    { "column": 120, "color": "#ff0000" }
+  ],
+
+  // Пользоваться встроенным в проект SDK
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  "eslint.validate": ["javascript", "html", "typescript", "json"],
+  "eslint.options": {
+    "extensions": [".js", ".ts", "html"]
+  },
+
+  // Не осуществлять навигацию по скомпилированным данным
+  "files.exclude": {
+    "**/node_modules": false,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/test-report.xml": true,
+    "**/*.js": { "when": "$(basename).ts" },
+    "**/*.map": { "when": "$(basename).map" }
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/test-report.xml": true,
+    "**/*.js": { "when": "$(basename).ts" },
+    "**/*.map": { "when": "$(basename).map" },
+    "package-lock.json": true
+  },
+
+  // Для форматирования typescript, javascript, vue и json использовать Prettier
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "files.eol": "\n",
+
+  "colorize.languages": ["typescript", "javascript"]
+}
