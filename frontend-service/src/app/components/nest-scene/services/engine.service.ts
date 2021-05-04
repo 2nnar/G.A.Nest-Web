@@ -30,7 +30,6 @@ export class EngineService implements OnDestroy {
       alpha: true, // transparent background
       antialias: true, // smooth edges
     });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     this.fbxLoader = new FBXLoader();
 
