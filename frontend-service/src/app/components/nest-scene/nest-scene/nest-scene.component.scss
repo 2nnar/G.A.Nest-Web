@@ -12,12 +12,16 @@
   outline: none;
 }
 #sidebar {
-  flex: 1 1 20%;
+  flex: 1 1 22%;
   font-family: monospace;
   padding: .5em;
   background: #444;
   color: white;
 }
 #scene {
-  flex: 1 1 80%;
+  flex: 1 1 78%;
+}
+.dropzone {
+  max-height: 50%;
+  overflow-y: auto;
 }

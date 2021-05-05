@@ -21,6 +21,7 @@ export class NestSceneComponent implements OnInit {
   }
 
   public onSelect(event: NgxDropzoneChangeEvent): void {
+    event.addedFiles.forEach((x) => this.engineService.loadPolygon(x));
     this.files.push(...event.addedFiles);
   }
 

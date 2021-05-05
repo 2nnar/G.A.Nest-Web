@@ -12,6 +12,8 @@ export class EngineService implements OnDestroy {
   private light: THREE.AmbientLight = {} as THREE.AmbientLight;
 
   private frameId: number | null = null;
+  private dragging: boolean = false;
+  private sensitivity: number = 0.05;
 
   public constructor() {}
 
@@ -24,6 +26,31 @@ export class EngineService implements OnDestroy {
   public createScene(canvas: ElementRef<HTMLCanvasElement>): void {
     // The first step is to get the reference of the canvas element from our HTML document
     this.canvas = canvas.nativeElement;
+
+    this.canvas.addEventListener('wheel', (event) => this.zoom(event), {
+      passive: false,
+    });
+    document.addEventListener(
+      'mousedown',
+      (event) => this.onDocumentMouseDown(event),
+      {
+        passive: false,
+      }
+    );
+    document.addEventListener(
+      'mousemove',
+      (event) => this.onDocumentMouseMove(event),
+      {
+        passive: false,
+      }
+    );
+    document.addEventListener(
+      'mouseup',
+      (event) => this.onDocumentMouseUp(event),
+      {
+        passive: false,
+      }
+    );
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
@@ -48,8 +75,9 @@ export class EngineService implements OnDestroy {
     // test polygon
     const points = [];
     points.push(new THREE.Vector2(-10, 0));
-    points.push(new THREE.Vector2(0, 10));
     points.push(new THREE.Vector2(10, 0));
+    points.push(new THREE.Vector2(10, 10));
+    points.push(new THREE.Vector2(-10, 10));
     points.push(new THREE.Vector2(-10, 0));
     this.addPolygon(points, 0x0000ff);
   }
@@ -76,19 +104,18 @@ export class EngineService implements OnDestroy {
     this.scene.add(line);
   }
 
-  public loadPolygon(path: string): void {
-    this.fbxLoader.load(
-      path,
-      (obj) => {
-        this.scene.add(obj);
-      },
-      (xhr) => {
-        console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
-      },
-      (error) => {
-        console.log(error);
+  public loadPolygon(file: File): void {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (!reader.result) {
+        return;
       }
-    );
+      const obj = this.fbxLoader.parse(reader.result, '');
+      this.scene.add(obj);
+    };
+
+    reader.readAsArrayBuffer(file);
   }
 
   private resizeCanvasToDisplaySize(): boolean {
@@ -106,12 +133,31 @@ export class EngineService implements OnDestroy {
   }
 
   private animate(): void {
-    const resizeNeeded = this.resizeCanvasToDisplaySize();
-    if (!resizeNeeded) {
-      return;
-    }
-
+    this.resizeCanvasToDisplaySize();
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.animate.bind(this));
+  }
+
+  private zoom(event: WheelEvent): void {
+    event.preventDefault();
+
+    this.camera.position.z += event.deltaY / 20;
+  }
+
+  private onDocumentMouseDown(event: MouseEvent) {
+    event.preventDefault();
+
+    this.dragging = true;
+  }
+
+  private onDocumentMouseUp(event: MouseEvent) {
+    this.dragging = false;
+  }
+
+  private onDocumentMouseMove(event: MouseEvent) {
+    if (!this.dragging) return;
+
+    this.camera.position.y += event.movementY * this.sensitivity;
+    this.camera.position.x -= event.movementX * this.sensitivity;
   }
 }

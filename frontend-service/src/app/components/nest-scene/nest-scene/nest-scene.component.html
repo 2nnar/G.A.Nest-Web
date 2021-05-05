@@ -1,11 +1,13 @@
 <div class="frame">
   <div id="sidebar">
-    <ngx-dropzone (change)="onSelect($event)" accept=".fbx">
-      <ngx-dropzone-label>Drop FBX files</ngx-dropzone-label>
-      <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
-        <ngx-dropzone-label>{{ f.name }}</ngx-dropzone-label>
-      </ngx-dropzone-preview>
-    </ngx-dropzone>
+    <div class="dropzone">
+      <ngx-dropzone (change)="onSelect($event)" accept=".fbx" [expandable]="true">
+        <ngx-dropzone-label>Drop FBX files</ngx-dropzone-label>
+        <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+          <ngx-dropzone-label>{{ f.name }}</ngx-dropzone-label>
+        </ngx-dropzone-preview>
+      </ngx-dropzone>
+    </div>
   </div>
   <div id="scene">
     <canvas #rendererCanvas id="rendererCanvas"></canvas>
