@@ -12,8 +12,8 @@ export class EngineService implements OnDestroy {
   private light: THREE.AmbientLight = {} as THREE.AmbientLight;
 
   private frameId: number | null = null;
-  private dragging: boolean = false;
-  private sensitivity: number = 0.05;
+  private dragging = false;
+  private sensitivity = 0.05;
 
   public constructor() {}
 
@@ -74,12 +74,11 @@ export class EngineService implements OnDestroy {
 
     // test polygon
     const points = [];
-    points.push(new THREE.Vector2(-10, 0));
-    points.push(new THREE.Vector2(10, 0));
-    points.push(new THREE.Vector2(10, 10));
-    points.push(new THREE.Vector2(-10, 10));
-    points.push(new THREE.Vector2(-10, 0));
-    this.addPolygon(points, 0x0000ff);
+    points.push(new THREE.Vector3(-10, -10, 0));
+    points.push(new THREE.Vector3(10, -10, 0));
+    points.push(new THREE.Vector3(10, 10, 0));
+    points.push(new THREE.Vector3(-10, 10, 0));
+    this.addPolygonFromPoints(points, 0x0000ff);
   }
 
   public render(): void {
@@ -87,21 +86,40 @@ export class EngineService implements OnDestroy {
     this.animate();
   }
 
-  public addPolygon(
-    points: THREE.Vector2[],
-    color: THREE.Color | string | number
+  public addPolygonFromPoints(
+    points: THREE.Vector3[],
+    color: THREE.Color | string | number,
+    closed: boolean = false
   ): void {
     if (points.length === 0) {
       return;
     }
 
-    points.push(points[0]);
+    if (!closed) {
+      points.push(points[0]);
+    }
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    this.addPolygonFromGeometry(geometry, color);
+  }
+
+  public addPolygonFromGeometry(
+    geometry: THREE.BufferGeometry,
+    color: THREE.Color | string | number
+  ): void {
     const material = new THREE.LineBasicMaterial({ color });
 
     const line = new THREE.Line(geometry, material);
     this.scene.add(line);
+  }
+
+  private numberArrayToVectors(array: number[]): THREE.Vector3[] {
+    const vectors = [];
+    for (let i = 0; i < array.length; i += 3) {
+      const vector = new THREE.Vector3(array[i], array[i + 1], array[i + 2]);
+      vectors.push(vector);
+    }
+    return vectors;
   }
 
   public loadPolygon(file: File): void {
@@ -112,7 +130,15 @@ export class EngineService implements OnDestroy {
         return;
       }
       const obj = this.fbxLoader.parse(reader.result, '');
-      this.scene.add(obj);
+      console.log(obj);
+      obj.children
+        .filter((x) => x instanceof THREE.Mesh)
+        .forEach((x) => {
+          const points = this.numberArrayToVectors(
+            Array.from((x as THREE.Mesh).geometry.attributes.position.array)
+          );
+          this.addPolygonFromPoints(points, 0xff0000, true);
+        });
     };
 
     reader.readAsArrayBuffer(file);
@@ -144,18 +170,20 @@ export class EngineService implements OnDestroy {
     this.camera.position.z += event.deltaY / 20;
   }
 
-  private onDocumentMouseDown(event: MouseEvent) {
+  private onDocumentMouseDown(event: MouseEvent): void {
     event.preventDefault();
 
     this.dragging = true;
   }
 
-  private onDocumentMouseUp(event: MouseEvent) {
+  private onDocumentMouseUp(event: MouseEvent): void {
     this.dragging = false;
   }
 
-  private onDocumentMouseMove(event: MouseEvent) {
-    if (!this.dragging) return;
+  private onDocumentMouseMove(event: MouseEvent): void {
+    if (!this.dragging) {
+      return;
+    }
 
     this.camera.position.y += event.movementY * this.sensitivity;
     this.camera.position.x -= event.movementX * this.sensitivity;
