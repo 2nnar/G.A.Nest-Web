@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NestService", "NestService.csproj", "{28330453-4588-4BEA-B09A-4CFDD368D818}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NestService.Api", "src\NestService.Api\NestService.Api.csproj", "{28330453-4588-4BEA-B09A-4CFDD368D818}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{00596606-3D64-42FE-A3D1-3D9B0A69CEB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7B0B4F55-C29A-4F4B-981B-B54DC0D7AD47}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,6 +25,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{28330453-4588-4BEA-B09A-4CFDD368D818} = {00596606-3D64-42FE-A3D1-3D9B0A69CEB3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF436583-9E62-4A69-AB5B-438F59DA46D8}

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Text;
 
-namespace nest_service
+namespace NestService.Api
 {
     public class Program
     {
