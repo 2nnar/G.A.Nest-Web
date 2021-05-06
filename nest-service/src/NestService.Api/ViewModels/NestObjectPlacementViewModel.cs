@@ -3,23 +3,23 @@
 namespace NestService.Api.ViewModels
 {
     /// <summary>
-    /// Nested polygon placement.
+    /// Nested object placement.
     /// </summary>
-    public class NestPolygonPlacementViewModel
+    public class NestObjectPlacementViewModel
     {
         /// <summary>
-        /// Polygon ID.
+        /// Object ID.
         /// </summary>
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Polygon rotation.
+        /// Object rotation.
         /// </summary>
         public double Rotation { get; set; }
 
         /// <summary>
-        /// Polygon translation point.
+        /// Object translation point.
         /// </summary>
-        public NestPolygonVertexViewModel TranslationPoint { get; set; } = new();
+        public NestObjectVertexViewModel TranslationPoint { get; set; } = new();
     }
 }

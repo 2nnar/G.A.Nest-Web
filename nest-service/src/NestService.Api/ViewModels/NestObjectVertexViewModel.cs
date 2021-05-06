@@ -3,7 +3,7 @@
     /// <summary>
     /// Polygon vertex.
     /// </summary>
-    public class NestPolygonVertexViewModel
+    public class NestObjectVertexViewModel
     {
         /// <summary>
         /// X coordinate.

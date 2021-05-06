@@ -1,9 +1,9 @@
-﻿namespace NestService.Api.ViewModels
+﻿namespace NestService.Api.Models
 {
     /// <summary>
-    /// Polygon vertex.
+    /// Nest object vertex.
     /// </summary>
-    public class NestPolygonVertexPostViewModel
+    public class NestObjectVertex
     {
         /// <summary>
         /// X coordinate.

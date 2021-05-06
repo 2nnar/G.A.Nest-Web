@@ -11,6 +11,6 @@ namespace NestService.Api.ViewModels
         /// <summary>
         /// Nested polygon placements.
         /// </summary>
-        public IEnumerable<NestPolygonPlacementViewModel> Placements { get; set; } = Array.Empty<NestPolygonPlacementViewModel>();
+        public IEnumerable<NestObjectPlacementViewModel> Placements { get; set; } = Array.Empty<NestObjectPlacementViewModel>();
     }
 }

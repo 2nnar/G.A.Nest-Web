@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NestService.Api.ViewModels.Abstract;
+using NestService.Api.ViewModels.NestObjects;
+using System;
 using System.Collections.Generic;
 
 namespace NestService.Api.ViewModels
@@ -9,13 +11,13 @@ namespace NestService.Api.ViewModels
     public class NestDataPostViewModel
     {
         /// <summary>
-        /// List of polygons to nest.
+        /// List of objects to nest.
         /// </summary>
-        public IEnumerable<NestPolygonPostViewModel> Polygons { get; set; } = Array.Empty<NestPolygonPostViewModel>();
+        public IEnumerable<NestObjectViewModel> Objects { get; set; } = Array.Empty<NestObjectViewModel>();
 
         /// <summary>
         /// Bin.
         /// </summary>
-        public NestPolygonPostViewModel Bin {get;set;} = new();
+        public NestObjectViewModel Bin { get; set; } = new NestPolygonViewModel();
     }
 }
