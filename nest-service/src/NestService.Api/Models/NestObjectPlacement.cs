@@ -21,5 +21,14 @@ namespace NestService.Api.Models
         /// Object translation point.
         /// </summary>
         public NestObjectPoint TranslationPoint { get; set; } = new();
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="objectId">Object ID.</param>
+        /// <param name="rotation">Rotation angle.</param>
+        /// <param name="translationPoint">Translation point.</param>
+        public NestObjectPlacement(Guid objectId, double rotation, NestObjectPoint translationPoint)
+            => (Id, Rotation, TranslationPoint) = (objectId, rotation, translationPoint);
     }
 }

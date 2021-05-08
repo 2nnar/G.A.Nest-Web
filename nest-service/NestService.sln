@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NestService.Tests", "NestService.Tests\NestService.Tests.csproj", "{FB8ACB0A-DC91-457F-88A4-FBD3AEEE6887}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,12 +24,17 @@ Global
 		{28330453-4588-4BEA-B09A-4CFDD368D818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28330453-4588-4BEA-B09A-4CFDD368D818}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28330453-4588-4BEA-B09A-4CFDD368D818}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB8ACB0A-DC91-457F-88A4-FBD3AEEE6887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB8ACB0A-DC91-457F-88A4-FBD3AEEE6887}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB8ACB0A-DC91-457F-88A4-FBD3AEEE6887}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB8ACB0A-DC91-457F-88A4-FBD3AEEE6887}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{28330453-4588-4BEA-B09A-4CFDD368D818} = {00596606-3D64-42FE-A3D1-3D9B0A69CEB3}
+		{FB8ACB0A-DC91-457F-88A4-FBD3AEEE6887} = {00596606-3D64-42FE-A3D1-3D9B0A69CEB3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF436583-9E62-4A69-AB5B-438F59DA46D8}

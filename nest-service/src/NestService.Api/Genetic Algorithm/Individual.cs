@@ -40,9 +40,12 @@ namespace NestService.Api.GeneticAlgorithm
             return _paths[i];
         }
 
-        public UniPath? FindPathById(int id)
+        public UniPath FindPathById(int id)
         {
-            return _paths.Find(x => x.ID == id);
+            var path = _paths.Find(x => x.ID == id);
+            if (path is null)
+                throw new Exception("Path not found.");
+            return path;
         }
 
         void SetRandomRotation(UniPath path)

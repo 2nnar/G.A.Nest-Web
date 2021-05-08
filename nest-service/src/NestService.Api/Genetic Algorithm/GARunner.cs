@@ -10,18 +10,13 @@ namespace NestService.Api.GeneticAlgorithm
 {
     public class Vector
     {
-        public int id;
-        public double X;
-        public double Y;
-        public double rotation;
+        public int Id { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Rotation { get; set; }
 
         public Vector(double x, double y, int id, double rotation)
-        {
-            X = x;
-            Y = y;
-            this.id = id;
-            this.rotation = rotation;
-        }
+            => (X, Y, Id, Rotation) = (x, y, id, rotation);
 
         public override string ToString()
         {
@@ -31,18 +26,13 @@ namespace NestService.Api.GeneticAlgorithm
 
     public class Result
     {
-        public double area;
-        public double fitness;
-        public List<UniPath> paths;
-        public List<Vector> placements;
+        public double Area { get; set; }
+        public double Fitness { get; set; }
+        public List<UniPath> Paths { get; set; }
+        public List<Vector> Placements { get; set; }
 
         public Result(List<Vector> placements, double fitness, List<UniPath> paths, double area)
-        {
-            this.placements = placements;
-            this.fitness = fitness;
-            this.paths = paths;
-            this.area = area;
-        }
+            => (Placements, Fitness, Paths, Area) = (placements, fitness, paths, area);
     }
 
     public class GARunner
@@ -55,13 +45,13 @@ namespace NestService.Api.GeneticAlgorithm
 
         struct Pair
         {
-            public Individual male;
-            public Individual female;
+            public Individual Male { get; set; }
+            public Individual Female { get; set; }
         }
         struct Children
         {
-            public Individual firstChild;
-            public Individual secondChild;
+            public Individual FirstChild { get; set; }
+            public Individual SecondChild { get; set; }
         }
 
         public GARunner(UniPath bin, List<UniPath> components, NestConfig config)
@@ -115,7 +105,7 @@ namespace NestService.Api.GeneticAlgorithm
                     }
 
                     var res = GetNestingResult(nfpPaths, nfpKeys);
-                    individual.FitnessResult = res.fitness;
+                    individual.FitnessResult = res.Fitness;
                     return res;
                 }
             }
@@ -129,10 +119,8 @@ namespace NestService.Api.GeneticAlgorithm
             foreach (var path in _components)
                 paths.Add(path.Rotate(path.Rotation));
 
-            var allplacements = new List<Vector>();
+            var allPlacements = new List<Vector>();
             var fitness = 0d;
-            NFP? key = null;
-            UniPath? nfp = null;
 
             while (paths.Count > 0)
             {
@@ -143,7 +131,7 @@ namespace NestService.Api.GeneticAlgorithm
                 for (var i = 0; i < paths.Count; i++)
                 {
                     var path = paths[i];
-                    key = nfpKeys.Find(k => k.A.ID == _bin.ID && k.B.ID == path.ID && k.Relation == PolygonRelation.Contains);
+                    var key = nfpKeys.Find(k => k.A.ID == _bin.ID && k.B.ID == path.ID && k.Relation == PolygonRelation.Contains);
 
                     if (key is null) continue;
 
@@ -155,7 +143,7 @@ namespace NestService.Api.GeneticAlgorithm
                         key = nfpKeys.Find(k => k.A.ID == placed[j].ID && k.B.ID == path.ID && k.Relation == PolygonRelation.Adjacent);
                         if (key is not null)
                         {
-                            nfp = nfpPaths[nfpKeys.IndexOf(key)];
+                            var nfp = nfpPaths[nfpKeys.IndexOf(key)];
                         }
                         else
                         {
@@ -178,7 +166,7 @@ namespace NestService.Api.GeneticAlgorithm
                                     key.RotationB
                                 );
 
-                        allplacements.Add(position);
+                        allPlacements.Add(position);
                         placed.Add(path);
                         continue;
                     }
@@ -195,7 +183,7 @@ namespace NestService.Api.GeneticAlgorithm
                     for (var j = 0; j < placed.Count; j++)
                     {
                         key = nfpKeys.Find(k => k.A.ID == placed[j].ID && k.B.ID == path.ID && key.Relation == PolygonRelation.Adjacent);
-                        nfp = nfpPaths[nfpKeys.IndexOf(key)];
+                        var nfp = nfpPaths[nfpKeys.IndexOf(key)];
                         if (nfp is null) continue;
 
                         var clone = nfp.ToClipperPolygon(_config.Tolerance);
@@ -204,8 +192,8 @@ namespace NestService.Api.GeneticAlgorithm
                             var clx = clone[m].X;
                             var cly = clone[m].Y;
                             var intPoint = clone[m];
-                            intPoint.X = clx + (long)(allplacements[j].X * Math.Pow(10, _config.Tolerance));
-                            intPoint.Y = cly + (long)(allplacements[j].Y * Math.Pow(10, _config.Tolerance));
+                            intPoint.X = clx + (long)(allPlacements[j].X * Math.Pow(10, _config.Tolerance));
+                            intPoint.Y = cly + (long)(allPlacements[j].Y * Math.Pow(10, _config.Tolerance));
                             clone[m] = intPoint;
                         }
 
@@ -258,8 +246,8 @@ namespace NestService.Api.GeneticAlgorithm
                             var allpoints = new UniPath();
                             for (var m = 0; m < placed.Count; m++)
                                 for (var n = 0; n < placed[m].Points.Count(); n++)
-                                    allpoints.AddPoint(new UniPathPoint(placed[m].GetPoint(n).X + allplacements[m].X,
-                                        placed[m].GetPoint(n).Y + allplacements[m].Y));
+                                    allpoints.AddPoint(new UniPathPoint(placed[m].GetPoint(n).X + allPlacements[m].X,
+                                        placed[m].GetPoint(n).Y + allPlacements[m].Y));
 
                             shifvector = new Vector(nf.GetPoint(k).X - path.GetPoint(0).X, nf.GetPoint(k).Y - path.GetPoint(0).Y,
                                 path.ID, key.RotationB);
@@ -283,7 +271,7 @@ namespace NestService.Api.GeneticAlgorithm
                     if (position is not null)
                     {
                         placed.Add(path);
-                        allplacements.Add(position);
+                        allPlacements.Add(position);
                     }
                 }
 
@@ -295,11 +283,11 @@ namespace NestService.Api.GeneticAlgorithm
                     paths.RemoveAll(p => p.ID == placed[i].ID);
                 }
 
-                if (allplacements.Count == 0) break;
+                if (allPlacements.Count == 0) break;
             }
 
             fitness += 2 * paths.Count;
-            return new Result(allplacements, fitness, paths, _bin.Area);
+            return new Result(allPlacements, fitness, paths, _bin.Area);
         }
 
         void NextGeneration()
@@ -310,10 +298,10 @@ namespace NestService.Api.GeneticAlgorithm
             for (var i = 1; i < nextgen.Length; i += 2)
             {
                 var parents = RouletteParentsSelection();
-                while (parents.male is null || parents.female is null) parents = RouletteParentsSelection();
+                while (parents.Male is null || parents.Female is null) parents = RouletteParentsSelection();
                 var children = SinglePointCrossover(parents);
-                nextgen[i] = children.firstChild;
-                if (i + 1 < nextgen.Length) nextgen[i + 1] = children.secondChild;
+                nextgen[i] = children.FirstChild;
+                if (i + 1 < nextgen.Length) nextgen[i + 1] = children.SecondChild;
             }
             _population = nextgen;
         }
@@ -335,8 +323,8 @@ namespace NestService.Api.GeneticAlgorithm
             {
                 begin = end;
                 end += probs[i];
-                if (randomProb == 0) { pair.male = _population[0]; male_index = 0; }
-                else if (begin < randomProb && randomProb <= end) { pair.male = _population[i]; male_index = i; break; }
+                if (randomProb == 0) { pair.Male = _population[0]; male_index = 0; }
+                else if (begin < randomProb && randomProb <= end) { pair.Male = _population[i]; male_index = i; break; }
             }
 
             end = 0;
@@ -347,8 +335,8 @@ namespace NestService.Api.GeneticAlgorithm
                 end += probs[i];
                 if (i != male_index)
                 {
-                    if (randomProb == 0) pair.female = _population[0];
-                    else if (begin < randomProb && randomProb <= end) { pair.female = _population[i]; break; }
+                    if (randomProb == 0) pair.Female = _population[0];
+                    else if (begin < randomProb && randomProb <= end) { pair.Female = _population[i]; break; }
                 }
             }
             return pair;
@@ -367,39 +355,39 @@ namespace NestService.Api.GeneticAlgorithm
             var crossoverPoint = _rand.Next(1, _components.Count - 1);
             for (var i = 0; i < crossoverPoint; i++)
             {
-                ids1.Add(pair.male.GetPath(i).ID);
-                rotations1[pair.male.GetPath(i).ID] = pair.male.Rotations[pair.male.GetPath(i).ID];
-                ids2.Add(pair.female.GetPath(i).ID);
-                rotations2[pair.female.GetPath(i).ID] = pair.female.Rotations[pair.female.GetPath(i).ID];
+                ids1.Add(pair.Male.GetPath(i).ID);
+                rotations1[pair.Male.GetPath(i).ID] = pair.Male.Rotations[pair.Male.GetPath(i).ID];
+                ids2.Add(pair.Female.GetPath(i).ID);
+                rotations2[pair.Female.GetPath(i).ID] = pair.Female.Rotations[pair.Female.GetPath(i).ID];
             }
             for (var i = 0; i < _components.Count; i++)
             {
-                if (!ids1.Contains(pair.female.GetPath(i).ID))
+                if (!ids1.Contains(pair.Female.GetPath(i).ID))
                 {
-                    ids1.Add(pair.female.GetPath(i).ID);
-                    rotations1[pair.female.GetPath(i).ID] = pair.female.Rotations[pair.female.GetPath(i).ID];
+                    ids1.Add(pair.Female.GetPath(i).ID);
+                    rotations1[pair.Female.GetPath(i).ID] = pair.Female.Rotations[pair.Female.GetPath(i).ID];
                 }
-                if (!ids2.Contains(pair.male.GetPath(i).ID))
+                if (!ids2.Contains(pair.Male.GetPath(i).ID))
                 {
-                    ids2.Add(pair.male.GetPath(i).ID);
-                    rotations2[pair.male.GetPath(i).ID] = pair.male.Rotations[pair.male.GetPath(i).ID];
+                    ids2.Add(pair.Male.GetPath(i).ID);
+                    rotations2[pair.Male.GetPath(i).ID] = pair.Male.Rotations[pair.Male.GetPath(i).ID];
                 }
             }
             for (var i = 0; i < crossoverPoint; i++)
             {
-                inheritedGene1.Add(pair.male.FindPathById(ids1.ToArray()[i]));
-                inheritedGene2.Add(pair.female.FindPathById(ids2.ToArray()[i]));
+                inheritedGene1.Add(pair.Male.FindPathById(ids1.ToArray()[i]));
+                inheritedGene2.Add(pair.Female.FindPathById(ids2.ToArray()[i]));
             }
             for (var i = crossoverPoint; i < _components.Count; i++)
             {
-                inheritedGene1.Add(pair.female.FindPathById(ids1.ToArray()[i]));
-                inheritedGene2.Add(pair.male.FindPathById(ids2.ToArray()[i]));
+                inheritedGene1.Add(pair.Female.FindPathById(ids1.ToArray()[i]));
+                inheritedGene2.Add(pair.Male.FindPathById(ids2.ToArray()[i]));
             }
 
             var firstChild = new Individual(_bin, inheritedGene1, _config) { Rotations = rotations1 };
             var secondChild = new Individual(_bin, inheritedGene2, _config) { Rotations = rotations2 };
-            children.firstChild = firstChild;
-            children.secondChild = secondChild;
+            children.FirstChild = firstChild;
+            children.SecondChild = secondChild;
             return children;
         }
     }

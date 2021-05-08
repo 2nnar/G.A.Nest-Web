@@ -10,7 +10,7 @@ namespace NestService.Api.ViewModels.NestObjects
     public class NestPolygonViewModel : NestObjectViewModel
     {
         /// <summary>
-        /// List of polygon vertices.s
+        /// List of polygon vertices.
         /// </summary>
         public IEnumerable<NestObjectPointViewModel> Vertices { get; set; } = Array.Empty<NestObjectPointViewModel>();
     }

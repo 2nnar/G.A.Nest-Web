@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using NestService.Api.Models;
-using NestService.Api.Models.Geometry;
+using NestService.Api.Models.Abstract;
 using NestService.Api.Services;
 using NestService.Api.ViewModels;
 using System.Collections.Generic;
@@ -40,8 +40,8 @@ namespace NestService.Api
             [FromBody] NestDataPostViewModel value,
             [FromQuery] NestConfig config)
         {
-            var bin = _mapper.Map<UniPath>(value.Bin);
-            var components = _mapper.Map<List<UniPath>>(value.Objects);
+            var bin = _mapper.Map<NestObject>(value.Bin);
+            var components = _mapper.Map<List<NestObject>>(value.Objects);
             var placements = await _nester.GetNestedComponents(bin, components, config);
             var result = _mapper.Map<NestResultViewModel>(placements);
             return result;

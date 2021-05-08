@@ -6,7 +6,7 @@ namespace NestService.Api.ViewModels.Abstract
     /// <summary>
     /// Nest object.
     /// </summary>
-    public abstract class NestObjectViewModel
+    public class NestObjectViewModel
     {
         /// <summary>
         /// Object ID.

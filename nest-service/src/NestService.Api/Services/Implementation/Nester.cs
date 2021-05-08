@@ -1,5 +1,7 @@
-﻿using NestService.Api.GeneticAlgorithm;
+﻿using NestService.Api.Extensions;
+using NestService.Api.GeneticAlgorithm;
 using NestService.Api.Models;
+using NestService.Api.Models.Abstract;
 using NestService.Api.Models.Geometry;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +15,11 @@ namespace NestService.Api.Services.Implementation
         {
         }
 
-        public Task<List<Placement>> GetNestedComponents(UniPath bin, List<UniPath> components, NestConfig config)
+        public Task<List<NestObjectPlacement>> GetNestedComponents(NestObject binObject, List<NestObject> componentObjects, NestConfig config)
         {
+            var bin = binObject.ToUniPath(config);
+            var components = componentObjects.Select(x => x.ToUniPath(config)).ToList();
+
             if (config.CutThickness > 0)
             {
                 bin = bin.OffsetPolygon(-config.CutThickness / 2, config.Tolerance);
@@ -34,7 +39,9 @@ namespace NestService.Api.Services.Implementation
                 results.Add(res);
             }
 
-            return Task.FromResult(GetPlacements(results.Where(r => r.fitness == results.Min(x => x.fitness)).First(), components));
+            var placements = GetPlacements(results.Where(r => r.Fitness == results.Min(x => x.Fitness)).First(), components);
+
+            return Task.FromResult(placements);
         }
 
         static void ArrangeIndexing(List<UniPath> components, int initID = 0)
@@ -56,13 +63,15 @@ namespace NestService.Api.Services.Implementation
             return fitting;
         }
 
-        static List<Placement> GetPlacements(Result result, List<UniPath> components)
+        static List<NestObjectPlacement> GetPlacements(Result result, List<UniPath> components)
         {
-            var placements = new List<Placement>();
-            foreach (var placement in result.placements)
+            var placements = new List<NestObjectPlacement>();
+            foreach (var placement in result.Placements)
             {
-                var uniPath = components.Find(c => c.ID == placement.id);
-                var pathPlacecement = new Placement(uniPath, placement.rotation, new UniPathPoint(placement.X, placement.Y));
+                var uniPath = components.Find(c => c.ID == placement.Id);
+                if (uniPath is null)
+                    continue;
+                var pathPlacecement = new NestObjectPlacement(uniPath.Info.Id, placement.Rotation, new(placement.X, placement.Y));
                 placements.Add(pathPlacecement);
             }
             return placements;

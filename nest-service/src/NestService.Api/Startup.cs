@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NestService.Api.Services;
 using NestService.Api.Services.Implementation;
+using Newtonsoft.Json.Converters;
 
 namespace NestService.Api
 {
@@ -25,7 +26,12 @@ namespace NestService.Api
                         .AllowAnyMethod());
             });
 
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(opt =>
+                {
+                    opt.UseCamelCasing(true);
+                });
 
             services.AddSingleton<INester, Nester>();
 

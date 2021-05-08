@@ -5,7 +5,7 @@ namespace NestService.Api.Models.Abstract
     /// <summary>
     /// Nest object.
     /// </summary>
-    public abstract class NestObject
+    public class NestObject
     {
         /// <summary>
         /// Object ID.
@@ -20,11 +20,11 @@ namespace NestService.Api.Models.Abstract
         /// <summary>
         /// Up and rightmost point.
         /// </summary>
-        public abstract NestObjectPoint MaxPoint { get; }
+        public virtual NestObjectPoint MaxPoint { get; } = new();
 
         /// <summary>
         /// Down and leftmost point.
         /// </summary>
-        public abstract NestObjectPoint MinPoint { get; }
+        public virtual NestObjectPoint MinPoint { get; } = new();
     }
 }
