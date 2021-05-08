@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NestService.Api.Services;
+using NestService.Api.Services.Implementation;
 
 namespace NestService.Api
 {
@@ -24,6 +26,10 @@ namespace NestService.Api
             });
 
             services.AddControllers();
+
+            services.AddSingleton<INester, Nester>();
+
+            services.AddAutoMapper(typeof(Startup));
         }
 
         public void Configure(IApplicationBuilder app)

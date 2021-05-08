@@ -10,7 +10,7 @@ namespace NestService.Api.ViewModels.NestObjects
         /// <summary>
         /// Center point.
         /// </summary>
-        public NestObjectVertexViewModel Center { get; set; } = new();
+        public NestObjectPointViewModel Center { get; set; } = new();
 
         /// <summary>
         /// Major radius.

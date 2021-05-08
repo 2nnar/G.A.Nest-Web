@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace NestService.Api.ViewModels
+namespace NestService.Api.Models
 {
     /// <summary>
     /// Nested object placement.
     /// </summary>
-    public class NestObjectPlacementViewModel
+    public class NestObjectPlacement
     {
         /// <summary>
         /// Object ID.
@@ -20,6 +20,6 @@ namespace NestService.Api.ViewModels
         /// <summary>
         /// Object translation point.
         /// </summary>
-        public NestObjectPointViewModel TranslationPoint { get; set; } = new();
+        public NestObjectPoint TranslationPoint { get; set; } = new();
     }
 }

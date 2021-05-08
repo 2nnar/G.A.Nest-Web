@@ -12,6 +12,6 @@ namespace NestService.Api.ViewModels.NestObjects
         /// <summary>
         /// List of polygon vertices.s
         /// </summary>
-        public IEnumerable<NestObjectVertexViewModel> Vertices { get; set; } = Array.Empty<NestObjectVertexViewModel>();
+        public IEnumerable<NestObjectPointViewModel> Vertices { get; set; } = Array.Empty<NestObjectPointViewModel>();
     }
 }

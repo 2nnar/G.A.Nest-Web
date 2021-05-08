@@ -16,5 +16,15 @@ namespace NestService.Api.Models.Abstract
         /// Object type.
         /// </summary>
         public NestObjectType Type { get; set; }
+
+        /// <summary>
+        /// Up and rightmost point.
+        /// </summary>
+        public abstract NestObjectPoint MaxPoint { get; }
+
+        /// <summary>
+        /// Down and leftmost point.
+        /// </summary>
+        public abstract NestObjectPoint MinPoint { get; }
     }
 }
