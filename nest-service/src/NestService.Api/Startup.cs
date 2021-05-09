@@ -21,9 +21,9 @@ namespace NestService.Api
             {
                 options.AddPolicy(_allowAllPolicy,
                     builder => builder
-                        .AllowAnyHeader()
-                        .AllowCredentials()
-                        .AllowAnyMethod());
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
             });
 
             services

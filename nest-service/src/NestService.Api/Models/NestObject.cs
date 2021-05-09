@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NestService.Api.Models.Abstract
+namespace NestService.Api.Models
 {
     /// <summary>
     /// Nest object.

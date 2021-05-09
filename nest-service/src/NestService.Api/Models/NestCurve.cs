@@ -1,5 +1,4 @@
-﻿using NestService.Api.Models.Abstract;
-using System;
+﻿using System;
 
 namespace NestService.Api.Models
 {

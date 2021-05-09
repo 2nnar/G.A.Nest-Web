@@ -1,5 +1,5 @@
 ﻿using NestService.Api.Models;
-using NestService.Api.ViewModels.Abstract;
+using NestService.Api.ViewModels;
 using NestService.Api.ViewModels.NestObjects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

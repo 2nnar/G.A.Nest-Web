@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NestService.Tests", "NestService.Tests\NestService.Tests.csproj", "{FB8ACB0A-DC91-457F-88A4-FBD3AEEE6887}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NestService.Tests", "src\NestService.Tests\NestService.Tests.csproj", "{FB8ACB0A-DC91-457F-88A4-FBD3AEEE6887}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

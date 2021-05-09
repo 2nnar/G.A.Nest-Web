@@ -1,5 +1,4 @@
 ﻿using NestService.Api.Configuration.Converters;
-using NestService.Api.ViewModels.Abstract;
 using NestService.Api.ViewModels.NestObjects;
 using Newtonsoft.Json;
 using System;

@@ -1,5 +1,4 @@
-﻿using NestService.Api.ViewModels.Abstract;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace NestService.Api.ViewModels.NestObjects

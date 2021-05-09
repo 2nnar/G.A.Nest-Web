@@ -1,6 +1,8 @@
 import { ElementRef, Injectable, OnDestroy } from '@angular/core';
+import { Guid } from 'guid-typescript';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import { GraphicsUtils } from '../../../utils/graphics.utils';
 
 @Injectable()
 export class EngineService implements OnDestroy {
@@ -10,9 +12,12 @@ export class EngineService implements OnDestroy {
   private camera: THREE.PerspectiveCamera = {} as THREE.PerspectiveCamera;
   private scene: THREE.Scene = {} as THREE.Scene;
   private light: THREE.AmbientLight = {} as THREE.AmbientLight;
+  private raycaster: THREE.Raycaster = {} as THREE.Raycaster;
+  private workspacePlane: THREE.Mesh = {} as THREE.Mesh;
 
   private frameId: number | null = null;
   private dragging = false;
+  private pickedObject: THREE.Line | null = null;
   private sensitivity = 0.05;
 
   public constructor() {}
@@ -23,34 +28,46 @@ export class EngineService implements OnDestroy {
     }
   }
 
-  public createScene(canvas: ElementRef<HTMLCanvasElement>): void {
+  public getObjects(): THREE.Line[] {
+    const meshes: THREE.Line[] = [];
+    this.scene.traverse((x) => {
+      if (x instanceof THREE.Line) {
+        meshes.push(x);
+      }
+    });
+    return meshes;
+  }
+
+  public move(id: string, point: { x: number; y: number; z: number }): void {
+    const obj = this.scene.getObjectByProperty('uuid', id);
+    obj?.position.set(point.x, point.y, point.z);
+  }
+
+  public rotate(
+    id: string,
+    angle: number,
+    point: { x: number; y: number; z: number }
+  ): void {
+    const obj = this.scene.getObjectByProperty('uuid', id);
+    obj?.rotateOnWorldAxis(new THREE.Vector3(point.x, point.y, point.z), angle);
+  }
+
+  public createScene(canvas: ElementRef<HTMLCanvasElement>, binId: Guid): void {
     // The first step is to get the reference of the canvas element from our HTML document
     this.canvas = canvas.nativeElement;
 
-    this.canvas.addEventListener('wheel', (event) => this.zoom(event), {
+    this.canvas.addEventListener('wheel', (event) => this.onWheel(event), {
       passive: false,
     });
-    document.addEventListener(
-      'mousedown',
-      (event) => this.onDocumentMouseDown(event),
-      {
-        passive: false,
-      }
-    );
-    document.addEventListener(
-      'mousemove',
-      (event) => this.onDocumentMouseMove(event),
-      {
-        passive: false,
-      }
-    );
-    document.addEventListener(
-      'mouseup',
-      (event) => this.onDocumentMouseUp(event),
-      {
-        passive: false,
-      }
-    );
+    document.addEventListener('mousedown', (event) => this.onMouseDown(event), {
+      passive: false,
+    });
+    document.addEventListener('mousemove', (event) => this.onMouseMove(event), {
+      passive: false,
+    });
+    document.addEventListener('mouseup', (event) => this.onMouseUp(event), {
+      passive: false,
+    });
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
@@ -60,8 +77,18 @@ export class EngineService implements OnDestroy {
 
     this.fbxLoader = new FBXLoader();
 
+    const planeGeometry = new THREE.PlaneGeometry(
+      this.canvas.width,
+      this.canvas.height
+    );
+    const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+    this.workspacePlane = new THREE.Mesh(planeGeometry, planeMaterial);
+    this.raycaster = new THREE.Raycaster();
+
     // create the scene
     this.scene = new THREE.Scene();
+
+    // this.scene.add(new THREE.AxesHelper(100));
 
     this.camera = new THREE.PerspectiveCamera(75, 2, 0.1, 1000);
     this.camera.position.z = 50;
@@ -78,7 +105,7 @@ export class EngineService implements OnDestroy {
     points.push(new THREE.Vector3(10, -10, 0));
     points.push(new THREE.Vector3(10, 10, 0));
     points.push(new THREE.Vector3(-10, 10, 0));
-    this.addPolygonFromPoints(points, 0x0000ff);
+    this.addPolygonFromPoints(points, 0x0000ff, binId.toString());
   }
 
   public render(): void {
@@ -89,6 +116,7 @@ export class EngineService implements OnDestroy {
   public addPolygonFromPoints(
     points: THREE.Vector3[],
     color: THREE.Color | string | number,
+    id: string,
     closed: boolean = false
   ): void {
     if (points.length === 0) {
@@ -100,26 +128,19 @@ export class EngineService implements OnDestroy {
     }
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    this.addPolygonFromGeometry(geometry, color);
+    this.addPolygonFromGeometry(geometry, color, id);
   }
 
   public addPolygonFromGeometry(
     geometry: THREE.BufferGeometry,
-    color: THREE.Color | string | number
+    color: THREE.Color | string | number,
+    id: string
   ): void {
     const material = new THREE.LineBasicMaterial({ color });
 
     const line = new THREE.Line(geometry, material);
+    line.uuid = id;
     this.scene.add(line);
-  }
-
-  private numberArrayToVectors(array: number[]): THREE.Vector3[] {
-    const vectors = [];
-    for (let i = 0; i < array.length; i += 3) {
-      const vector = new THREE.Vector3(array[i], array[i + 1], array[i + 2]);
-      vectors.push(vector);
-    }
-    return vectors;
   }
 
   public loadPolygon(file: File): void {
@@ -130,14 +151,18 @@ export class EngineService implements OnDestroy {
         return;
       }
       const obj = this.fbxLoader.parse(reader.result, '');
-      console.log(obj);
       obj.children
         .filter((x) => x instanceof THREE.Mesh)
         .forEach((x) => {
-          const points = this.numberArrayToVectors(
+          const points = GraphicsUtils.numberArrayToVectors(
             Array.from((x as THREE.Mesh).geometry.attributes.position.array)
           );
-          this.addPolygonFromPoints(points, 0xff0000, true);
+          this.addPolygonFromPoints(
+            points,
+            0xff0000,
+            Guid.create().toString(),
+            true
+          );
         });
     };
 
@@ -158,30 +183,67 @@ export class EngineService implements OnDestroy {
     return resizeNeeded;
   }
 
+  private getCanvasPosition(event: MouseEvent): { x: number; y: number } {
+    const rect = this.canvas.getBoundingClientRect();
+    return {
+      x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
+      y: ((event.clientY - rect.top) / rect.height) * -2 + 1,
+    };
+  }
+
+  private pick(mousePos: { x: number; y: number }): void {
+    this.raycaster.setFromCamera(mousePos, this.camera);
+    const intersectedObjects = this.raycaster.intersectObjects(
+      this.scene.children.filter(
+        (x) => x instanceof THREE.Line && !(x instanceof THREE.AxesHelper)
+      )
+    );
+    if (intersectedObjects.length === 0) {
+      return;
+    }
+    this.pickedObject = intersectedObjects[0].object as THREE.Line;
+  }
+
   private animate(): void {
     this.resizeCanvasToDisplaySize();
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.animate.bind(this));
   }
 
-  private zoom(event: WheelEvent): void {
+  private onWheel(event: WheelEvent): void {
     event.preventDefault();
 
     this.camera.position.z += event.deltaY / 20;
   }
 
-  private onDocumentMouseDown(event: MouseEvent): void {
+  private onMouseDown(event: MouseEvent): void {
     event.preventDefault();
 
     this.dragging = true;
+
+    const pickingPos = this.getCanvasPosition(event);
+    this.pick(pickingPos);
   }
 
-  private onDocumentMouseUp(event: MouseEvent): void {
+  private onMouseUp(event: MouseEvent): void {
+    event.preventDefault();
+
     this.dragging = false;
+    this.pickedObject = null;
   }
 
-  private onDocumentMouseMove(event: MouseEvent): void {
+  private onMouseMove(event: MouseEvent): void {
+    event.preventDefault();
+
     if (!this.dragging) {
+      return;
+    }
+
+    if (this.pickedObject) {
+      const pos = this.getCanvasPosition(event);
+      this.raycaster.setFromCamera(pos, this.camera);
+      const intersect = this.raycaster.intersectObject(this.workspacePlane)[0];
+      this.pickedObject.position.copy(intersect.point);
       return;
     }
 

@@ -23,6 +23,7 @@
     "@angular/router": "~11.2.7",
     "bootstrap": "^4.6.0",
     "eslint": "^7.25.0",
+    "guid-typescript": "^1.0.9",
     "ngx-dropzone": "^3.0.0",
     "rxjs": "~6.6.0",
     "three": "^0.128.0",

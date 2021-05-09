@@ -1,7 +1,6 @@
 ﻿using NestService.Api.Extensions;
 using NestService.Api.GeneticAlgorithm;
 using NestService.Api.Models;
-using NestService.Api.Models.Abstract;
 using NestService.Api.Models.Geometry;
 using System.Collections.Generic;
 using System.Linq;

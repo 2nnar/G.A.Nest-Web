@@ -1,7 +1,7 @@
 ﻿using NestService.Api.Models;
 using System;
 
-namespace NestService.Api.ViewModels.Abstract
+namespace NestService.Api.ViewModels
 {
     /// <summary>
     /// Nest object.

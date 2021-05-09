@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using NestService.Api.Models;
-using NestService.Api.Models.Abstract;
 using NestService.Api.Services;
 using NestService.Api.ViewModels;
 using System.Collections.Generic;

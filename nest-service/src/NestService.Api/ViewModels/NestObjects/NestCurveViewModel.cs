@@ -1,6 +1,4 @@
-﻿using NestService.Api.ViewModels.Abstract;
-
-namespace NestService.Api.ViewModels.NestObjects
+﻿namespace NestService.Api.ViewModels.NestObjects
 {
     /// <summary>
     /// Nest curve.

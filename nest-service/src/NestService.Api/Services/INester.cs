@@ -1,5 +1,4 @@
 ﻿using NestService.Api.Models;
-using NestService.Api.Models.Abstract;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

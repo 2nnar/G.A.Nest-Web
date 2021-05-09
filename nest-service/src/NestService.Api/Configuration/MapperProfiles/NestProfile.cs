@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using NestService.Api.Models;
-using NestService.Api.Models.Abstract;
 using NestService.Api.ViewModels;
-using NestService.Api.ViewModels.Abstract;
 using NestService.Api.ViewModels.NestObjects;
 using System.Collections.Generic;
 
