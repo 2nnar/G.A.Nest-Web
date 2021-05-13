@@ -3,7 +3,10 @@ kind: Deployment
 metadata:
   name: nest-service
 spec:
-  replicas: 2
+  replicas: 1
+  selector:
+    matchLabels:
+        app: nest-service
   template:
     metadata:
       labels:
