@@ -1,14 +1,14 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Guid } from 'guid-typescript';
 import { NgxDropzoneChangeEvent } from 'ngx-dropzone';
-import { NestConfig } from 'src/app/back-models/nest.model';
-import { GraphicsUtils } from 'src/app/utils/graphics.utils';
 import {
+  NestConfig,
   NestData,
   NestObjectPlacement,
   NestObjectType,
   NestPolygon,
-} from '../../../back-models/nest.model';
+} from 'src/app/back-models/nest.model';
+import { GraphicsUtils } from 'src/app/utils/graphics.utils';
 import { EngineService } from '../services/engine.service';
 import { NestService } from '../services/nest.service';
 
@@ -48,6 +48,7 @@ export class NestSceneComponent implements OnInit {
   public async nest(): Promise<void> {
     console.log('Nesting started...');
     const sceneObjects = this.engineService.getObjects();
+    this.engineService.setToDefaults(sceneObjects);
     const sceneBin = sceneObjects.find((x) => x.uuid === this.binId.toString());
     if (!sceneBin) {
       return;

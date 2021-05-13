@@ -1,8 +1,8 @@
 import { ElementRef, Injectable, OnDestroy } from '@angular/core';
 import { Guid } from 'guid-typescript';
+import { GraphicsUtils } from 'src/app/utils/graphics.utils';
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { GraphicsUtils } from '../../../utils/graphics.utils';
 
 @Injectable()
 export class EngineService implements OnDestroy {
@@ -38,9 +38,16 @@ export class EngineService implements OnDestroy {
     return meshes;
   }
 
+  public setToDefaults(objects: THREE.Object3D[]): void {
+    objects.forEach((x) => {
+      x.position.set(0, 0, 0);
+      x.rotation.set(0, 0, 0);
+    });
+  }
+
   public move(id: string, point: { x: number; y: number; z: number }): void {
     const obj = this.scene.getObjectByProperty('uuid', id);
-    obj?.position.set(point.x, point.y, point.z);
+    obj?.position.add(new THREE.Vector3(point.x, point.y, point.z));
   }
 
   public rotate(
@@ -48,8 +55,13 @@ export class EngineService implements OnDestroy {
     angle: number,
     point: { x: number; y: number; z: number }
   ): void {
+    const vector = new THREE.Vector3(point.x, point.y, point.z);
+    const axis = new THREE.Vector3(0, 0, 1);
     const obj = this.scene.getObjectByProperty('uuid', id);
-    obj?.rotateOnWorldAxis(new THREE.Vector3(point.x, point.y, point.z), angle);
+    obj?.position.sub(vector);
+    obj?.position.applyAxisAngle(axis, angle);
+    obj?.position.add(vector);
+    obj?.rotateOnAxis(axis, angle);
   }
 
   public createScene(canvas: ElementRef<HTMLCanvasElement>, binId: Guid): void {
@@ -101,11 +113,25 @@ export class EngineService implements OnDestroy {
 
     // test polygon
     const points = [];
-    points.push(new THREE.Vector3(-10, -10, 0));
-    points.push(new THREE.Vector3(10, -10, 0));
-    points.push(new THREE.Vector3(10, 10, 0));
-    points.push(new THREE.Vector3(-10, 10, 0));
+    points.push(new THREE.Vector3(-30, -30, 0));
+    points.push(new THREE.Vector3(30, -30, 0));
+    points.push(new THREE.Vector3(30, 30, 0));
+    points.push(new THREE.Vector3(-30, 30, 0));
     this.addPolygonFromPoints(points, 0x0000ff, binId.toString());
+
+    const points1 = [];
+    points1.push(new THREE.Vector3(-10, -10, 0));
+    points1.push(new THREE.Vector3(10, -10, 0));
+    points1.push(new THREE.Vector3(10, 10, 0));
+    points1.push(new THREE.Vector3(-10, 10, 0));
+    this.addPolygonFromPoints(points1, 0x0000ff, Guid.create().toString());
+
+    const points2 = [];
+    points2.push(new THREE.Vector3(-10, -10, 0));
+    points2.push(new THREE.Vector3(10, -10, 0));
+    points2.push(new THREE.Vector3(10, 10, 0));
+    points2.push(new THREE.Vector3(-10, 10, 0));
+    this.addPolygonFromPoints(points2, 0x0000ff, Guid.create().toString());
   }
 
   public render(): void {

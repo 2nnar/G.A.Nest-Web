@@ -8,7 +8,37 @@
         </ngx-dropzone-preview>
       </ngx-dropzone>
     </div>
-    <button mat-button class="sidebar__button" (click)="nest()">Nest</button>
+    <button class="sidebar__button" (click)="nest()">Nest</button>
+    <table>
+      <tr>
+        <td>Tolerance</td>
+        <td><input type="number" value=1></td>
+      </tr>
+      <tr>
+        <td>Cut thickness</td>
+        <td><input type="number" value=1></td>
+      </tr>
+      <tr>
+        <td>Curve approximation</td>
+        <td><input type="number" value=1></td>
+      </tr>
+      <tr>
+        <td>Iterations count</td>
+        <td><input type="number" value=1></td>
+      </tr>
+      <tr>
+        <td>Population size</td>
+        <td><input type="number" value=1></td>
+      </tr>
+      <tr>
+        <td>Mutation rate</td>
+        <td><input type="number" value=1></td>
+      </tr>
+      <tr>
+        <td>Use holes</td>
+        <td><input type="number" value=1></td>
+      </tr>
+    </table>
   </div>
   <div id="scene">
     <canvas #rendererCanvas id="rendererCanvas"></canvas>
