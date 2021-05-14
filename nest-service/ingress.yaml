@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nest-service
+spec:
+  rules:
+  - host: nest-service.api
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: nest-service
+          servicePort: 80
