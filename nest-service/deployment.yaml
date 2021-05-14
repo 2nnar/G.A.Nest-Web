@@ -13,8 +13,8 @@ spec:
         app: nest-service
     spec:
       containers:
-        - image: "2nnar/nest-service"
+        - image: 2nnar/nest-service
           imagePullPolicy: Always
           name: nest-service
           ports:
-            - containerPort: 80
+            - containerPort: 5005
