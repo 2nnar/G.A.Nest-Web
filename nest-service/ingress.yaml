@@ -15,4 +15,4 @@ spec:
               service:
                 name: nest-service
                 port:
-                  number: 5005
+                  number: 80
