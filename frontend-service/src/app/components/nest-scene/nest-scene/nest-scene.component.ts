@@ -1,8 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Guid } from 'guid-typescript';
 import { NgxDropzoneChangeEvent } from 'ngx-dropzone';
 import {
-  NestConfig,
   NestData,
   NestObjectPlacement,
   NestObjectType,
@@ -22,18 +22,31 @@ export class NestSceneComponent implements OnInit {
   public rendererCanvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
 
   public files: File[] = [];
+  public nestConfigControl: FormGroup = {} as FormGroup;
 
-  private nestConfig: NestConfig = {} as NestConfig;
   private binId = Guid.create();
 
   public constructor(
     private engineService: EngineService,
-    private nestService: NestService
+    private nestService: NestService,
+    private formBuilder: FormBuilder
   ) {}
 
   public ngOnInit(): void {
     this.engineService.createScene(this.rendererCanvas, this.binId);
     this.engineService.render();
+
+    const formData = {
+      tolerance: [3, [Validators.min(0)]],
+      cutThickness: [0, [Validators.min(0)]],
+      curveApproximation: [0.05, [Validators.min(0), Validators.max(1)]],
+      iterationsCount: [1, [Validators.min(1)]],
+      populationSize: [10, [Validators.min(2)]],
+      mutationRate: [0.1, [Validators.min(0), Validators.max(1)]],
+      holesUsing: [false],
+    };
+
+    this.nestConfigControl = this.formBuilder.group(formData);
   }
 
   public onSelect(event: NgxDropzoneChangeEvent): void {
@@ -47,6 +60,7 @@ export class NestSceneComponent implements OnInit {
 
   public async nest(): Promise<void> {
     console.log('Nesting started...');
+    const nestConfig = this.nestConfigControl.getRawValue();
     const sceneObjects = this.engineService.getObjects();
     this.engineService.setToDefaults(sceneObjects);
     const sceneBin = sceneObjects.find((x) => x.uuid === this.binId.toString());
@@ -76,7 +90,7 @@ export class NestSceneComponent implements OnInit {
       bin: nestBin,
       objects: nestObjects,
     };
-    const nestResult = await this.nestService.nest(nestData, this.nestConfig);
+    const nestResult = await this.nestService.nest(nestData, nestConfig);
 
     console.log('Applying placements...');
     this.placeObjects(nestResult.placements);

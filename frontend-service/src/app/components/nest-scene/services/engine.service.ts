@@ -71,13 +71,21 @@ export class EngineService implements OnDestroy {
     this.canvas.addEventListener('wheel', (event) => this.onWheel(event), {
       passive: false,
     });
-    document.addEventListener('mousedown', (event) => this.onMouseDown(event), {
-      passive: false,
-    });
-    document.addEventListener('mousemove', (event) => this.onMouseMove(event), {
-      passive: false,
-    });
-    document.addEventListener('mouseup', (event) => this.onMouseUp(event), {
+    this.canvas.addEventListener(
+      'mousedown',
+      (event) => this.onMouseDown(event),
+      {
+        passive: false,
+      }
+    );
+    this.canvas.addEventListener(
+      'mousemove',
+      (event) => this.onMouseMove(event),
+      {
+        passive: false,
+      }
+    );
+    this.canvas.addEventListener('mouseup', (event) => this.onMouseUp(event), {
       passive: false,
     });
 
