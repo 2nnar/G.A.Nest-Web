@@ -3,9 +3,9 @@ kind: Service
 metadata:
   name: nest-service
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
-  - port: 5005
+  - port: 80
     targetPort: 5005
   selector:
     app: nest-service
