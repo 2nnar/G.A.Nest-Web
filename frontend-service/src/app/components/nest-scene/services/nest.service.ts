@@ -16,7 +16,7 @@ export class NestService {
       httpParams = httpParams.append(key, (config as any)[key]);
     });
     const result = await this.http
-      .post<NestResult>('http://localhost:5005/api/v1/nest', data, {
+      .post<NestResult>('http://g-a-nest.ru/api/v1/nest', data, {
         params: httpParams,
       })
       .toPromise();
