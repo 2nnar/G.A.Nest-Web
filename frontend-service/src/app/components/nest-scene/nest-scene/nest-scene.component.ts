@@ -23,6 +23,9 @@ export class NestSceneComponent implements OnInit {
 
   public files: File[] = [];
   public nestConfigControl: FormGroup = {} as FormGroup;
+  public isNesting = false;
+  public binWidth = 60;
+  public binLength = 60;
 
   private binId = Guid.create();
 
@@ -33,7 +36,12 @@ export class NestSceneComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.engineService.createScene(this.rendererCanvas, this.binId);
+    this.engineService.createScene(
+      this.rendererCanvas,
+      this.binId,
+      this.binWidth,
+      this.binLength
+    );
     this.engineService.render();
 
     const formData = {
@@ -58,13 +66,23 @@ export class NestSceneComponent implements OnInit {
     this.files.splice(this.files.indexOf(event), 1);
   }
 
+  public updateBin() {
+    this.engineService.updateRectangle(
+      this.binId.toString(),
+      this.binLength,
+      this.binWidth
+    );
+  }
+
   public async nest(): Promise<void> {
     console.log('Nesting started...');
+    this.isNesting = true;
     const nestConfig = this.nestConfigControl.getRawValue();
     const sceneObjects = this.engineService.getObjects();
     this.engineService.setToDefaults(sceneObjects);
     const sceneBin = sceneObjects.find((x) => x.uuid === this.binId.toString());
     if (!sceneBin) {
+      alert('Bin is not found!');
       return;
     }
     const nestBin: NestPolygon = {
@@ -96,6 +114,7 @@ export class NestSceneComponent implements OnInit {
     this.placeObjects(nestResult.placements);
 
     console.log('Nesting finished.');
+    this.isNesting = false;
   }
 
   private placeObjects(placements: NestObjectPlacement[]): void {

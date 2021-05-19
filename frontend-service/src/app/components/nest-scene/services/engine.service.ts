@@ -64,7 +64,37 @@ export class EngineService implements OnDestroy {
     obj?.rotateOnAxis(axis, angle);
   }
 
-  public createScene(canvas: ElementRef<HTMLCanvasElement>, binId: Guid): void {
+  public updateRectangle(id: string, length: number, width: number) {
+    const obj = this.scene.getObjectByProperty('uuid', id);
+    const line = obj as THREE.Line;
+    if (!line) {
+      return;
+    }
+
+    if (line.geometry.attributes.position.count !== 5) {
+      return;
+    }
+
+    const halfLength = length / 2;
+    const halfWidth = width / 2;
+
+    const points = [];
+    points.push(new THREE.Vector3(-halfLength, -halfWidth, 0));
+    points.push(new THREE.Vector3(halfLength, -halfWidth, 0));
+    points.push(new THREE.Vector3(halfLength, halfWidth, 0));
+    points.push(new THREE.Vector3(-halfLength, halfWidth, 0));
+    points.push(new THREE.Vector3(-halfLength, -halfWidth, 0));
+
+    line.geometry.setFromPoints(points);
+    this.render();
+  }
+
+  public createScene(
+    canvas: ElementRef<HTMLCanvasElement>,
+    binId: Guid,
+    binWidth: number,
+    binLength: number
+  ): void {
     // The first step is to get the reference of the canvas element from our HTML document
     this.canvas = canvas.nativeElement;
 
@@ -86,6 +116,9 @@ export class EngineService implements OnDestroy {
       }
     );
     this.canvas.addEventListener('mouseup', (event) => this.onMouseUp(event), {
+      passive: false,
+    });
+    window.addEventListener('keydown', (event) => this.onKeyDown(event), {
       passive: false,
     });
 
@@ -119,12 +152,14 @@ export class EngineService implements OnDestroy {
     this.light.position.z = 10;
     this.scene.add(this.light);
 
-    // test polygon
+    // bin polygon
+    const halfWidth = binWidth / 2;
+    const halfLength = binLength / 2;
     const points = [];
-    points.push(new THREE.Vector3(-30, -30, 0));
-    points.push(new THREE.Vector3(30, -30, 0));
-    points.push(new THREE.Vector3(30, 30, 0));
-    points.push(new THREE.Vector3(-30, 30, 0));
+    points.push(new THREE.Vector3(-halfLength, -halfWidth, 0));
+    points.push(new THREE.Vector3(halfLength, -halfWidth, 0));
+    points.push(new THREE.Vector3(halfLength, halfWidth, 0));
+    points.push(new THREE.Vector3(-halfLength, halfWidth, 0));
     this.addPolygonFromPoints(points, 0x0000ff, binId.toString());
 
     const points1 = [];
@@ -283,5 +318,17 @@ export class EngineService implements OnDestroy {
 
     this.camera.position.y += event.movementY * this.sensitivity;
     this.camera.position.x -= event.movementX * this.sensitivity;
+  }
+
+  private onKeyDown(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'Delete': {
+        if (this.pickedObject) {
+          this.scene.remove(this.pickedObject);
+          this.render();
+        }
+        break;
+      }
+    }
   }
 }
