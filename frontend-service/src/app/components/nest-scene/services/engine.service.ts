@@ -160,7 +160,7 @@ export class EngineService implements OnDestroy {
     points.push(new THREE.Vector3(halfLength, -halfWidth, 0));
     points.push(new THREE.Vector3(halfLength, halfWidth, 0));
     points.push(new THREE.Vector3(-halfLength, halfWidth, 0));
-    this.addPolygonFromPoints(points, 0x0000ff, binId.toString());
+    this.addPolygonFromPoints(points, 'black', binId.toString());
 
     const points1 = [];
     points1.push(new THREE.Vector3(-10, -10, 0));
