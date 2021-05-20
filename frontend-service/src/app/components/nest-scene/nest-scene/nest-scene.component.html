@@ -1,0 +1,63 @@
+<div class="frame">
+  <div id="sidebar">
+    <div class="dropzone">
+      <ngx-dropzone (change)="onSelect($event)" accept=".fbx" [expandable]="true">
+        <ngx-dropzone-label>Drop FBX files</ngx-dropzone-label>
+        <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+          <ngx-dropzone-label>{{ f.name }}</ngx-dropzone-label>
+        </ngx-dropzone-preview>
+      </ngx-dropzone>
+    </div>
+    <div class="sidebar__block">
+      <form [formGroup]="nestConfigControl">
+        <table>
+          <tr>
+            <td>Tolerance</td>
+            <td><input class="sidebar__number" type="number" formControlName="tolerance" min="0" max="16" step="1"></td>
+          </tr>
+          <tr>
+            <td>Cut thickness</td>
+            <td><input class="sidebar__number" type="number" formControlName="cutThickness" min="0" max="100" step="0.001"></td>
+          </tr>
+          <tr>
+            <td>Curve approximation</td>
+            <td><input class="sidebar__number" type="number" formControlName="curveApproximation" min="0.0001" max="0.25" step="0.001"></td>
+          </tr>
+          <tr>
+            <td>Iterations count</td>
+            <td><input class="sidebar__number" type="number" formControlName="iterationsCount" min="1" max="1000000" step="1"></td>
+          </tr>
+          <tr>
+            <td>Population size</td>
+            <td><input class="sidebar__number" type="number" formControlName="populationSize" min="1" max="100" step="1"></td>
+          </tr>
+          <tr>
+            <td>Mutation rate</td>
+            <td><input class="sidebar__number" type="number" formControlName="mutationRate" min="0" max="1" step="0.1"></td>
+          </tr>
+          <tr>
+            <td>Use holes</td>
+            <td><input type="checkbox" formControlName="holesUsing"></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <div class="sidebar__block">
+      <table>
+        <tr>
+          <td>Bin length</td>
+          <td><input class="sidebar__number" type="number" [(ngModel)]="binLength" (ngModelChange)="updateBin()" min="1" step="1"></td>
+        </tr>
+        <tr>
+          <td>Bin width</td>
+          <td><input class="sidebar__number" type="number" [(ngModel)]="binWidth" (ngModelChange)="updateBin()" min="1" step="1"></td>
+        </tr>
+      </table>
+    </div>
+    <button class="sidebar__button" (click)="nest()">Nest</button>
+    <mat-progress-spinner [mode]="isNesting ? 'indeterminate' : 'determinate'"></mat-progress-spinner>
+  </div>
+  <div id="scene">
+    <canvas #rendererCanvas id="rendererCanvas"></canvas>
+  </div>
+</div>
