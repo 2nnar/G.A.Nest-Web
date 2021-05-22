@@ -64,7 +64,7 @@ export class EngineService implements OnDestroy {
     obj?.rotateOnAxis(axis, angle);
   }
 
-  public updateRectangle(id: string, length: number, width: number) {
+  public updateRectangle(id: string, length: number, width: number): void {
     const obj = this.scene.getObjectByProperty('uuid', id);
     const line = obj as THREE.Line;
     if (!line) {
@@ -143,7 +143,12 @@ export class EngineService implements OnDestroy {
 
     // this.scene.add(new THREE.AxesHelper(100));
 
+    const halfWidth = binWidth / 2;
+    const halfLength = binLength / 2;
+
     this.camera = new THREE.PerspectiveCamera(75, 2, 0.1, 1000);
+    this.camera.position.x = halfLength;
+    this.camera.position.y = halfWidth;
     this.camera.position.z = 50;
     this.scene.add(this.camera);
 
@@ -153,27 +158,25 @@ export class EngineService implements OnDestroy {
     this.scene.add(this.light);
 
     // bin polygon
-    const halfWidth = binWidth / 2;
-    const halfLength = binLength / 2;
     const points = [];
-    points.push(new THREE.Vector3(-halfLength, -halfWidth, 0));
-    points.push(new THREE.Vector3(halfLength, -halfWidth, 0));
-    points.push(new THREE.Vector3(halfLength, halfWidth, 0));
-    points.push(new THREE.Vector3(-halfLength, halfWidth, 0));
+    points.push(new THREE.Vector3(0, 0, 0));
+    points.push(new THREE.Vector3(binLength, 0, 0));
+    points.push(new THREE.Vector3(binLength, binWidth, 0));
+    points.push(new THREE.Vector3(0, binWidth, 0));
     this.addPolygonFromPoints(points, 'black', binId.toString());
 
     const points1 = [];
-    points1.push(new THREE.Vector3(-10, -10, 0));
-    points1.push(new THREE.Vector3(10, -10, 0));
-    points1.push(new THREE.Vector3(10, 10, 0));
-    points1.push(new THREE.Vector3(-10, 10, 0));
+    points1.push(new THREE.Vector3(5, 5, 0));
+    points1.push(new THREE.Vector3(25, 5, 0));
+    points1.push(new THREE.Vector3(25, 25, 0));
+    points1.push(new THREE.Vector3(5, 25, 0));
     this.addPolygonFromPoints(points1, 0x0000ff, Guid.create().toString());
 
     const points2 = [];
-    points2.push(new THREE.Vector3(-10, -10, 0));
-    points2.push(new THREE.Vector3(10, -10, 0));
-    points2.push(new THREE.Vector3(10, 10, 0));
-    points2.push(new THREE.Vector3(-10, 10, 0));
+    points2.push(new THREE.Vector3(35, 35, 0));
+    points2.push(new THREE.Vector3(55, 35, 0));
+    points2.push(new THREE.Vector3(55, 55, 0));
+    points2.push(new THREE.Vector3(35, 55, 0));
     this.addPolygonFromPoints(points2, 0x0000ff, Guid.create().toString());
   }
 
@@ -320,7 +323,7 @@ export class EngineService implements OnDestroy {
     this.camera.position.x -= event.movementX * this.sensitivity;
   }
 
-  private onKeyDown(event: KeyboardEvent) {
+  private onKeyDown(event: KeyboardEvent): void {
     switch (event.key) {
       case 'Delete': {
         if (this.pickedObject) {
