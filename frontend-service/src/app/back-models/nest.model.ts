@@ -51,3 +51,11 @@ export interface NestConfig {
   mutationRate: number;
   holesUsing: boolean;
 }
+
+export interface GCodeData {
+  objects: NestObject[];
+}
+
+export interface GCodeResult {
+  commands: string[];
+}

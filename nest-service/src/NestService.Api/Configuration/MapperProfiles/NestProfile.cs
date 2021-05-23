@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace NestService.Api.Configuration.MapperProfiles
 {
+#pragma warning disable CS1591 // Отсутствует комментарий XML для открытого видимого типа или члена
     public class NestProfile : Profile
     {
         public NestProfile()
@@ -22,6 +23,9 @@ namespace NestService.Api.Configuration.MapperProfiles
             CreateMap<NestObjectPlacement, NestObjectPlacementViewModel>();
             CreateMap<NestObjectPoint, NestObjectPointViewModel>();
             CreateMap<NestObjectPointViewModel, NestObjectPoint>();
+
+            CreateMap<IEnumerable<string>, GCodeResultViewModel>()
+                .ForMember(dst => dst.Commands, opt => opt.MapFrom(src => src));
         }
     }
 }

@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import {
+  GCodeData,
+  GCodeResult,
   NestConfig,
   NestData,
   NestResult,
@@ -8,6 +10,10 @@ import {
 
 @Injectable()
 export class NestService {
+  private baseUrl = isDevMode()
+    ? 'http://localhost:5005/api'
+    : 'http://g-a-nest.ru/api';
+
   public constructor(private http: HttpClient) {}
 
   public async nest(data: NestData, config: NestConfig): Promise<NestResult> {
@@ -16,9 +22,16 @@ export class NestService {
       httpParams = httpParams.append(key, (config as any)[key]);
     });
     const result = await this.http
-      .post<NestResult>('http://g-a-nest.ru/api/v1/nest', data, {
+      .post<NestResult>(`${this.baseUrl}/v1/nest`, data, {
         params: httpParams,
       })
+      .toPromise();
+    return result;
+  }
+
+  public async getGCode(data: GCodeData): Promise<GCodeResult> {
+    const result = await this.http
+      .post<GCodeResult>(`${this.baseUrl}/v1/g-code`, data)
       .toPromise();
     return result;
   }

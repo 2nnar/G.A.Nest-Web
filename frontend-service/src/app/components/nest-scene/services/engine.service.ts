@@ -46,8 +46,10 @@ export class EngineService implements OnDestroy {
   }
 
   public move(id: string, point: { x: number; y: number; z: number }): void {
-    const obj = this.scene.getObjectByProperty('uuid', id);
+    const obj = this.scene.getObjectByProperty('uuid', id) as THREE.Line;
     obj?.position.add(new THREE.Vector3(point.x, point.y, point.z));
+
+    this.updateGeometry(obj);
   }
 
   public rotate(
@@ -57,11 +59,13 @@ export class EngineService implements OnDestroy {
   ): void {
     const vector = new THREE.Vector3(point.x, point.y, point.z);
     const axis = new THREE.Vector3(0, 0, 1);
-    const obj = this.scene.getObjectByProperty('uuid', id);
+    const obj = this.scene.getObjectByProperty('uuid', id) as THREE.Line;
     obj?.position.sub(vector);
     obj?.position.applyAxisAngle(axis, angle);
     obj?.position.add(vector);
     obj?.rotateOnAxis(axis, angle);
+
+    this.updateGeometry(obj);
   }
 
   public updateRectangle(id: string, length: number, width: number): void {
@@ -282,6 +286,13 @@ export class EngineService implements OnDestroy {
     requestAnimationFrame(this.animate.bind(this));
   }
 
+  private updateGeometry(obj: THREE.Line): void {
+    obj?.updateMatrix();
+    obj?.geometry.applyMatrix4(obj.matrix);
+    obj.matrix.identity();
+    this.setToDefaults([obj]);
+  }
+
   private onWheel(event: WheelEvent): void {
     event.preventDefault();
 
@@ -301,6 +312,10 @@ export class EngineService implements OnDestroy {
     event.preventDefault();
 
     this.dragging = false;
+
+    if (this.pickedObject) {
+      this.updateGeometry(this.pickedObject);
+    }
     this.pickedObject = null;
   }
 
