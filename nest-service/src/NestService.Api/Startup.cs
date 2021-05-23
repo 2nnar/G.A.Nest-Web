@@ -3,10 +3,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NestService.Api.Services;
 using NestService.Api.Services.Implementation;
-using Newtonsoft.Json.Converters;
 
 namespace NestService.Api
 {
+#pragma warning disable CS1591 // Отсутствует комментарий XML дл¤ открытого видимого типа или члена
     public class Startup
     {
         const string _allowAllPolicy = "AllowAll";
@@ -34,6 +34,7 @@ namespace NestService.Api
                 });
 
             services.AddSingleton<INester, Nester>();
+            services.AddSingleton<IGCodeGenerator, GCodeGenerator>();
 
             services.AddAutoMapper(typeof(Startup));
         }

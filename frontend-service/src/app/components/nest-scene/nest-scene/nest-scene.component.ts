@@ -1,8 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as FileSaver from 'file-saver';
 import { Guid } from 'guid-typescript';
 import { NgxDropzoneChangeEvent } from 'ngx-dropzone';
 import {
+  GCodeData,
   NestData,
   NestObjectPlacement,
   NestObjectType,
@@ -66,7 +68,7 @@ export class NestSceneComponent implements OnInit {
     this.files.splice(this.files.indexOf(event), 1);
   }
 
-  public updateBin() {
+  public updateBin(): void {
     this.engineService.updateRectangle(
       this.binId.toString(),
       this.binLength,
@@ -79,12 +81,13 @@ export class NestSceneComponent implements OnInit {
     this.isNesting = true;
     const nestConfig = this.nestConfigControl.getRawValue();
     const sceneObjects = this.engineService.getObjects();
-    this.engineService.setToDefaults(sceneObjects);
     const sceneBin = sceneObjects.find((x) => x.uuid === this.binId.toString());
     if (!sceneBin) {
       alert('Bin is not found!');
       return;
     }
+    this.engineService.setToDefaults([sceneBin]);
+
     const nestBin: NestPolygon = {
       id: sceneBin.uuid,
       type: 'Polygon' as NestObjectType,
@@ -115,6 +118,30 @@ export class NestSceneComponent implements OnInit {
 
     console.log('Nesting finished.');
     this.isNesting = false;
+  }
+
+  public async getGCode(): Promise<void> {
+    const sceneObjects = this.engineService.getObjects();
+    const nestObjects: NestPolygon[] = sceneObjects
+      .filter((x) => x.uuid !== this.binId.toString())
+      .map((x) => {
+        return {
+          id: x.uuid,
+          type: 'Polygon' as NestObjectType,
+          vertices: GraphicsUtils.numberArrayToPoints(
+            Array.from(x.geometry.attributes.position.array)
+          ),
+        };
+      });
+
+    const gCodeData: GCodeData = {
+      objects: nestObjects,
+    };
+    const gCodeResult = await this.nestService.getGCode(gCodeData);
+    const blob = new Blob([gCodeResult.commands.join('\n')], {
+      type: 'text/x.gcode',
+    });
+    FileSaver.saveAs(blob, 'result.gcode');
   }
 
   private placeObjects(placements: NestObjectPlacement[]): void {
