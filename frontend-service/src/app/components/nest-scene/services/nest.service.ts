@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, isDevMode } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   GCodeData,
   GCodeResult,
@@ -10,9 +10,7 @@ import {
 
 @Injectable()
 export class NestService {
-  private baseUrl = isDevMode()
-    ? 'http://localhost:5005/api'
-    : 'http://g-a-nest.ru/api';
+  private baseUrl = 'http://g-a-nest.ru/api';
 
   public constructor(private http: HttpClient) {}
 
