@@ -79,15 +79,12 @@ export class EngineService implements OnDestroy {
       return;
     }
 
-    const halfLength = length / 2;
-    const halfWidth = width / 2;
-
     const points = [];
-    points.push(new THREE.Vector3(-halfLength, -halfWidth, 0));
-    points.push(new THREE.Vector3(halfLength, -halfWidth, 0));
-    points.push(new THREE.Vector3(halfLength, halfWidth, 0));
-    points.push(new THREE.Vector3(-halfLength, halfWidth, 0));
-    points.push(new THREE.Vector3(-halfLength, -halfWidth, 0));
+    points.push(new THREE.Vector3(0, 0, 0));
+    points.push(new THREE.Vector3(length, 0, 0));
+    points.push(new THREE.Vector3(length, width, 0));
+    points.push(new THREE.Vector3(0, width, 0));
+    points.push(new THREE.Vector3(0, 0, 0));
 
     line.geometry.setFromPoints(points);
     this.render();
