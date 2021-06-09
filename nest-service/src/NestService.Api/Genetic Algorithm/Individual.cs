@@ -50,8 +50,11 @@ namespace NestService.Api.GeneticAlgorithm
 
         void SetRandomRotation(UniPath path)
         {
-            var angle = _rand.NextDouble() * 2 * Math.PI;
-            var rotatedPath = path.Rotate(angle);
+            var angles = new List<double>();
+            for (var i = 0d; i < 2 * Math.PI; i += _config.RotationStep * Math.PI / 180)
+                angles.Add(i);
+            double angle = angles[_rand.Next(0, angles.Count)];
+            UniPath rotatedPath = path.Rotate(angle);
             if (rotatedPath.Width < _bin.Width && rotatedPath.Height < _bin.Height)
                 Rotations[path.ID] = angle;
             else SetRandomRotation(path);
