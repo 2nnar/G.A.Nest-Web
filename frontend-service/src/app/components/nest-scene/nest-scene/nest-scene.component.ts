@@ -50,6 +50,7 @@ export class NestSceneComponent implements OnInit {
       tolerance: [3, [Validators.min(0)]],
       cutThickness: [0, [Validators.min(0)]],
       curveApproximation: [0.05, [Validators.min(0), Validators.max(1)]],
+      rotationStep: [90, [Validators.min(0), Validators.max(360)]],
       iterationsCount: [1, [Validators.min(1)]],
       populationSize: [10, [Validators.min(2)]],
       mutationRate: [0.1, [Validators.min(0), Validators.max(1)]],

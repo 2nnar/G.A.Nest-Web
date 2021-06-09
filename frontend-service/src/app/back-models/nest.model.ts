@@ -46,6 +46,7 @@ export interface NestConfig {
   tolerance: number;
   cutThickness: number;
   curveApproximation: number;
+  rotationStep: number;
   iterationsCount: number;
   populationSize: number;
   mutationRate: number;
