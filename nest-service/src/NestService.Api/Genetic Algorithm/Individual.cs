@@ -27,12 +27,12 @@ namespace NestService.Api.GeneticAlgorithm
         {
             FitnessResult = -1;
             _bin = bin;
+            _config = config;
             _paths = new List<UniPath>();
             Rotations = new Dictionary<int, double>();
             _paths.AddRange(uniPaths);
             foreach (var p in _paths)
                 SetRandomRotation(p);
-            _config = config;
         }
 
         public UniPath GetPath(int i)
