@@ -39,11 +39,23 @@ namespace NestService.Api
             [FromBody] NestDataPostViewModel value,
             [FromQuery] NestConfig config)
         {
+            var configValid = IsConfigValid(config);
+            if (!configValid)
+                return BadRequest("Invalid config.");
+
             var bin = _mapper.Map<NestObject>(value.Bin);
             var components = _mapper.Map<List<NestObject>>(value.Objects);
             var placements = await _nester.GetNestedComponents(bin, components, config);
             var result = _mapper.Map<NestResultViewModel>(placements);
             return result;
+        }
+
+        bool IsConfigValid(NestConfig config)
+        {
+            if (config.RotationStep == 0)
+                return false;
+
+            return true;
         }
     }
 }

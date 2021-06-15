@@ -51,8 +51,8 @@ export class NestSceneComponent implements OnInit {
       cutThickness: [0, [Validators.min(0)]],
       curveApproximation: [0.05, [Validators.min(0), Validators.max(1)]],
       rotationStep: [90, [Validators.min(0), Validators.max(360)]],
-      iterationsCount: [1, [Validators.min(1)]],
-      populationSize: [10, [Validators.min(2)]],
+      iterationsCount: [1000, [Validators.min(1)]],
+      populationSize: [1000, [Validators.min(2)]],
       mutationRate: [0.1, [Validators.min(0), Validators.max(1)]],
       holesUsing: [false],
     };
@@ -139,10 +139,8 @@ export class NestSceneComponent implements OnInit {
       objects: nestObjects,
     };
     const gCodeResult = await this.nestService.getGCode(gCodeData);
-    const blob = new Blob([gCodeResult.commands.join('\n')], {
-      type: 'text/x.gcode',
-    });
-    FileSaver.saveAs(blob, 'result.gcode');
+    const blob = new Blob([gCodeResult.commands.join('\n')]);
+    FileSaver.saveAs(blob, 'result.ngc');
   }
 
   private placeObjects(placements: NestObjectPlacement[]): void {

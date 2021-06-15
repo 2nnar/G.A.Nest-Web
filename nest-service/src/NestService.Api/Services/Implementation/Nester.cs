@@ -2,45 +2,55 @@
 using NestService.Api.GeneticAlgorithm;
 using NestService.Api.Models;
 using NestService.Api.Models.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NestService.Api.Services.Implementation
 {
     public class Nester : INester
     {
+        static readonly TimeSpan _timeout = TimeSpan.FromMinutes(2);
+
         public Nester()
         {
         }
 
         public Task<List<NestObjectPlacement>> GetNestedComponents(NestObject binObject, List<NestObject> componentObjects, NestConfig config)
         {
-            var bin = binObject.ToUniPath(config);
-            var components = componentObjects.Select(x => x.ToUniPath(config)).ToList();
+            var cancellationToken = new CancellationTokenSource(_timeout).Token;
 
-            if (config.CutThickness > 0)
+            var result = Task.Run(() =>
             {
-                bin = bin.OffsetPolygon(-config.CutThickness / 2, config.Tolerance);
-                for (var i = 0; i < components.Count; i++)
-                    components[i] = components[i].OffsetPolygon(config.CutThickness / 2, config.Tolerance);
-            }
-            bin.ID = -1;
-            ArrangeIndexing(components);
-            components = GetFittingComponents(bin, components);
+                var bin = binObject.ToUniPath(config);
+                var components = componentObjects.Select(x => x.ToUniPath(config)).ToList();
 
-            var ga = new GARunner(bin, components, config);
+                if (config.CutThickness > 0)
+                {
+                    bin = bin.OffsetPolygon(-config.CutThickness / 2, config.Tolerance);
+                    for (var i = 0; i < components.Count; i++)
+                        components[i] = components[i].OffsetPolygon(config.CutThickness / 2, config.Tolerance);
+                }
+                bin.ID = -1;
+                ArrangeIndexing(components);
+                components = GetFittingComponents(bin, components);
 
-            var results = new List<Result>();
-            for (int i = 0; i < config.IterationsCount; i++)
-            {
-                var res = ga.RunAlgorithm();
-                results.Add(res);
-            }
+                var ga = new GARunner(bin, components, config);
 
-            var placements = GetPlacements(results.Where(r => r.Fitness == results.Min(x => x.Fitness)).First(), components);
+                var results = new List<Result>();
+                for (int i = 0; i < config.IterationsCount; i++)
+                {
+                    var res = ga.RunAlgorithm();
+                    results.Add(res);
+                }
 
-            return Task.FromResult(placements);
+                var placements = GetPlacements(results.Where(r => r.Fitness == results.Min(x => x.Fitness)).First(), components);
+                return placements;
+            }, cancellationToken);
+
+            return result;
         }
 
         static void ArrangeIndexing(List<UniPath> components, int initID = 0)

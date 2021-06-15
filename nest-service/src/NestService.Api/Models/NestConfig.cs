@@ -8,8 +8,8 @@ namespace NestService.Api.Models
         public double CurveApproximation { get; set; } = 0.05;
         public int RotationStep { get; set; } = 90;
 
-        public int IterationsCount { get; set; } = 1;
-        public int PopulationSize { get; set; } = 10;
+        public int IterationsCount { get; set; } = 1000;
+        public int PopulationSize { get; set; } = 1000;
         public double MutationRate { get; set; } = 0.1;
 
         public bool HolesUsing { get; set; } = false;

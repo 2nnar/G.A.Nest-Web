@@ -1,6 +1,7 @@
 ﻿using NestService.Api.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NestService.Api.Services.Implementation
 {
@@ -15,7 +16,9 @@ namespace NestService.Api.Services.Implementation
         {
             var commands = new List<string>()
             {
-                "G00 X0 Y0",
+                "M3", // spindle on - clockwise
+                "G21", // millimiters
+                "G00 X0 Y0 Z5", // start point
             };
 
             foreach (var obj in objects)
@@ -29,16 +32,27 @@ namespace NestService.Api.Services.Implementation
             }
 
             commands.Add("G00 X0 Y0");
+            commands.Add("M30");
             return commands;
         }
 
         static IEnumerable<string> GetPolygonCommands(NestPolygon polygon)
         {
-            var commands = new List<string>();
-            foreach (var vertex in polygon.Vertices)
+            if (!polygon.Vertices.Any())
+                return Array.Empty<string>();
+
+            var firstVertex = polygon.Vertices.First();
+            var commands = new List<string>
             {
-                commands.Add($"G00 X{vertex.X} Y{vertex.Y}".Replace(',', '.'));
+                $"(cutting polygon with ID: {polygon.Id})",
+                $"G00 X{firstVertex.X} Y{firstVertex.Y} Z5".Replace(',', '.'),
+                $"G01 Z-1 F100".Replace(',', '.')
+            };
+            foreach (var vertex in polygon.Vertices.Skip(1))
+            {
+                commands.Add($"G01 X{vertex.X} Y{vertex.Y} Z-1 F400".Replace(',', '.'));
             }
+            commands.Add("G00 Z5");
             return commands;
         }
     }
